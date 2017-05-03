@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
-            "name": "hello-world",
+            "name": "tile",
             "cpu": 1,
             "memory": 128,
             "essential": true,

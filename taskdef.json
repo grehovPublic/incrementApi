@@ -5,7 +5,7 @@
             "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
             "name": "tile",
             "cpu": 1,
-            "memory": 128,
+            "memory": 256,
             "essential": true,
             "portMappings": [
                 {

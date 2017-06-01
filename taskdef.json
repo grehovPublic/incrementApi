@@ -1,9 +1,9 @@
 {
-    "family": "tile",
+    "family": "jittrDomainRepositoryREST",
     "containerDefinitions": [
         {
             "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
-            "name": "tile",
+            "name": "jittrDomainRepositoryREST",
             "cpu": 1,
             "memory": 256,
             "essential": true,

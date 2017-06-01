@@ -1,0 +1,45 @@
+#spring:
+#  datasource:  
+#    spring.datasource.driverClassName: org.h2.Driver  
+#    spring.datasource.url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    spring.datasource.username: sa
+#    spring.datasource.password: 
+#    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+
+---
+spring:
+  profiles: prod
+  datasource:
+
+    spring.datasource.driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.99.100:5432/
+    username: postgres
+    password: admin
+    
+    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.generate-ddl: true
+    spring.jpa.show-sql: true
+    spring.jpa.hibernate.ddl-auto: create-drop
+    spring.data.jpa.repositories.enabled: true
+
+---
+spring:
+  profiles: container
+  datasource:
+    spring.datasource.driverClassName: org.postgresql.Driver
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    
+    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.generate-ddl: true
+    spring.jpa.show-sql: true
+    spring.jpa.hibernate.ddl-auto: create-drop
+    
+    
+#    spring.datasource.url=jdbc:postgresql://localhost:5432/initdb
+#    spring.datasource.username=postgres
+#    spring.datasource.password=mysecretpassword
+
+    
+    

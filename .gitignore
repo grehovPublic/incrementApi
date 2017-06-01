@@ -5,3 +5,8 @@
 .project
 .classpath
 .gradle
+
+jittrMainService.iml
+jittrMainService.ipr
+jittrMainService.iws
+.idea/*

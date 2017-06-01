@@ -1,18 +1,39 @@
 buildscript {
+	ext {
+		springBootVersion = '1.5.3.RELEASE'
+	}
 	repositories {
 		mavenCentral()
+		  maven {
+		      url "https://plugins.gradle.org/m2/"
+		  }
 	}
-
+	
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.4.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "net.saliman:gradle-cobertura-plugin:2.4.0"
+		classpath "gradle.plugin.org.hibernate.gradle.tools:hibernatetools-gradle-plugin:1.2.5"
+		classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
 }
 
+
 apply plugin: 'java'
-apply plugin: 'spring-boot'
+apply plugin: 'org.springframework.boot'
+//apply plugin: 'checkstyle'
+apply plugin: 'net.saliman.cobertura'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: "org.hibernate.gradle.tools"
+apply plugin: 'docker'
+
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
 
 jar {
-	baseName = 'contacts'
+	baseName = 'jittr-domain-repository-rest'
 	version  = '0.1.0'
 }
 
@@ -21,13 +42,22 @@ repositories {
 }
 
 dependencies {
+//	compile("org.springframework.boot:spring-boot-starter")
+	compile("org.springframework.plugin:spring-plugin-core")
+	
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-jdbc")
+	compile("org.springframework.boot:spring-boot-starter-data-jpa")
+	compile("org.springframework.boot:spring-boot-starter-security")
 	compile("org.thymeleaf:thymeleaf-spring4")
 	compile("com.h2database:h2")
+    compile("postgresql:postgresql:9.1-901-1.jdbc4")
+	compile("javax.inject:javax.inject:1")
+	compile("org.apache.commons:commons-lang3:$commonsLangVersion")
+	compile ("org.modelmapper:modelmapper:0.7.5")
 	
-    testCompile("junit:junit")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+	testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("junit:junit:$junitVersion")
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
 }
@@ -35,3 +65,21 @@ dependencies {
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.0'
 }
+
+/*group = 'grehov'
+
+task buildDocker(type: Docker, dependsOn: build) {
+
+  push = false
+  applicationName = jar.baseName
+  dockerfile = file('Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
+}*/
+
+
+

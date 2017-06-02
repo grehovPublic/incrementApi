@@ -80,15 +80,16 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     }
     
     /**
-     * Pulls {@link Jittle}s with given {@link Jitter}'s id and target queue,
-     * provided via the query parameters, from the repository. 
+     * Pulls {@link Jittle}s with given {@link Jitter}'s {@link Principal}
+     * provided via the query parameter, from the repository. 
      * 
      * @param jitterPrincipal the {@link Jitter}'s {@link Principal}, 
      * whose {@link Jittle}s to be returned.
      * @return the list of found {@link JittleDto}s. May be empty.
      * 
      * @throws IllegalArgumentException if argument is {@literal null}.
-     * @throws EmptyResultDataAccessException if no{@link Jitter} found.
+     * @throws JitterNotFoundException if {@link Jitter} with given {@link Principal} 
+     *         not found.
      */
     @ResponseStatus(HttpStatus.FOUND)   
     @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, 

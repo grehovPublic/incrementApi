@@ -9,4 +9,5 @@ public interface SharedConstants {
 
     String APPLICATION_JSON = "application/json";
     String JITTLES = "/jittles";
+    String JITTERS = "/jitters";
 }

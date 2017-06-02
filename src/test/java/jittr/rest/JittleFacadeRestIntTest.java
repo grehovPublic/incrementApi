@@ -1,55 +1,43 @@
 package jittr.rest;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.Principal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.WebApplicationContext;
 
 import jittr.Jittr;
 import jittr.db.JitterRepository;
 import jittr.db.JittleRepository;
 import jittr.db.jpa.JpaConfig;
-import jittr.domain.Jitter;
 import jittr.domain.Jittle;
-import jittr.domain.Jitter.Role;
-import jittr.domain.Jittle.TargetQueue;
-import jittr.dto.JitterDto;
 import jittr.dto.JittleDto;
 import jittr.rest.JittleFacadeRest;
 
@@ -69,27 +57,23 @@ public class JittleFacadeRestIntTest  {
 
     private MockMvc mockMvc;
 
-    private String userName = "bdussault";
-
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-    private Jitter jitter;
     Principal correctPrincipal;
     Principal wrongPrincipal;
-    private List<Jittle> jittles = new ArrayList<>();
-    private List<JittleDto> jittlesDto = new ArrayList<>();
-
+    private List<Jittle> jittles;
+    private List<JittleDto> jittlesDto;
 
     @Autowired
     private JittleRepository jittleRepository;
-    
-    @Autowired
-    private JitterRepository jitterRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
     
     public JittleFacadeRestIntTest() {
+        jittles = new ArrayList<>();
+        jittlesDto = new ArrayList<>();
+        
         correctPrincipal = new Principal() {
             @Override
             public String getName() {
@@ -132,7 +116,7 @@ public class JittleFacadeRestIntTest  {
      *                        @RequestBody final Collection<JittleDto> jittles):
      * 
      * Partitions:
-     *    jitterPrincipal: = null, correct, wrong;
+     *    jitterPrincipal: = correct, wrong;
      *    jittles = null;
      *    jittles.size: = 0,  = 1, > 1;
      *    jitles.jittle: = null, any rep. invariant is broken, valid JitlleDto;
@@ -145,8 +129,8 @@ public class JittleFacadeRestIntTest  {
     
     @Test
     @Transactional
-    public void testNullPrincipal_BadRequest() throws Exception {        
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+    public void testSave_WrongPrincipalNullList_BadRequest() throws Exception {        
+        mockMvc.perform(post("/jittles").principal(wrongPrincipal)
                 .content(this.json(null))
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
@@ -154,37 +138,42 @@ public class JittleFacadeRestIntTest  {
     
     @Test
     @Transactional
-    public void testWrongPrincipalNullList_BadRequest() throws Exception {        
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
-                .content(this.json(null))
-                .contentType(contentType))
-                .andExpect(status().isBadRequest());
-    } 
-    
-    @Test
-    @Transactional
-    public void testWrongPrincipalEmptyList_NotFound() throws Exception {        
+    public void testSave_WrongPrincipalEmptyList_NotFound() throws Exception {        
         mockMvc.perform(post("/jittles").principal(wrongPrincipal)
                 .content(this.json(new ArrayList<JittleDto>()))
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
+    } 
+    
+    @Test
+    @Transactional
+    public void testSave_CorrectPrincipalEmptyList_Created() throws Exception {        
+        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+                .content(this.json(new ArrayList<JittleDto>()))
+                .contentType(contentType))
+                .andExpect(status().isCreated());
         
         assertEquals(jittles, this.jittleRepository.findAll());
     } 
     
     @Test
     @Transactional
-    public void testCorrectPrincipalOneItemListValidItem_Created() throws Exception {   
-        List<JittleDto> oneItemList = Arrays.asList(jittlesDto.get(0));
+    public void testSave_CorrectPrincipalOneItemListValidItem_Created() throws Exception {   
+        List<JittleDto> onePresentItemList = jittlesDto.subList(0, 2);
+        onePresentItemList.get(0).setCountry("BRAZIL");
         mockMvc.perform(post("/jittles").principal(correctPrincipal)
-                .content(this.json(oneItemList))
+                .content(this.json(onePresentItemList))
                 .contentType(contentType))
                 .andExpect(status().isCreated());
+        
+        List<Jittle> updatedJittles = this.jittleRepository.findAll();        
+        assertEquals(jittles.size(), updatedJittles.size());
+        assertEquals(updatedJittles.get(0).getCountry(), onePresentItemList.get(0).getCountry());
     } 
     
     @Test
     @Transactional
-    public void testTwoItemsListNullItemValidItem_BadRequest() throws Exception {   
+    public void testSave_TwoItemsListNullItemValidItem_BadRequest() throws Exception {   
         List<JittleDto> twoItemList = new ArrayList<JittleDto>();
         twoItemList.add(jittlesDto.get(0));
         twoItemList.add(null);
@@ -197,7 +186,7 @@ public class JittleFacadeRestIntTest  {
     
     @Test
     @Transactional
-    public void testBrokenItem_BadRequest() throws Exception {          
+    public void testSave_BrokenItem_BadRequest() throws Exception {          
         mockMvc.perform(post("/jittles").principal(correctPrincipal)
                 .content(this.json(Arrays.asList(new JittleDto())))
                 .contentType(contentType))
@@ -206,16 +195,24 @@ public class JittleFacadeRestIntTest  {
     
     @Test
     @Transactional
-    public void testTwoValidItemsInique_Created() throws Exception {          
+    public void testSave_TwoValidItemsInique_Created() throws Exception {  
+        List<JittleDto> twoNewItemList = jittlesDto.subList(0, 3);
+        twoNewItemList.get(0).setId(2000L);
+        twoNewItemList.get(1).setId(2001L);
         mockMvc.perform(post("/jittles").principal(correctPrincipal)
-                .content(this.json(jittlesDto.subList(0, 3)))
+                .content(this.json(twoNewItemList))
                 .contentType(contentType))
                 .andExpect(status().isCreated());
+        
+        List<Jittle> updatedJittles = this.jittleRepository.findAll();  
+        assertEquals(updatedJittles.size() - jittles.size(), 2);
+        assertEquals(updatedJittles.get(updatedJittles.size() - 2).getId().longValue(), 2000L);    
+        assertEquals(updatedJittles.get(updatedJittles.size() - 1).getId().longValue(), 2001L); 
     }
     
     @Test
     @Transactional
-    public void testTwoValidItemsDuplcate_BadRequest() throws Exception {          
+    public void testSave_TwoValidItemsDuplcate_BadRequest() throws Exception {          
         mockMvc.perform(post("/jittles").principal(correctPrincipal)
                 .content(this.json(Arrays.asList(jittlesDto.subList(0, 3))))
                 .contentType(contentType))
@@ -224,20 +221,85 @@ public class JittleFacadeRestIntTest  {
     
     /*
      * Testing strategy for 
-     *  public List<JittleDto> pull(final Principal jitterPrincipal,
-            @PathVariable final TargetQueue tQueue) :
+     *  public List<JittleDto> pull(final Principal jitterPrincipal) :
      * 
      * Partitions:
-     *    jitterPrincipal: = null, correct, wrong;
-     *    tQueue = TRAIN_RAW, TRAIN_GRADED, BUILD_MAP, VIEW_RAW, VIEW_GRADED;
+     *    jitterPrincipal: = correct, wrong;
      *    
      *    # returns ResponseEntity with according http status: 
-     *          BAD_REQUEST, NOT_FOUND;
-     *          containing list of JittleDto objects. May be empty.
+     *          BAD_REQUEST, NOT_FOUND, FOUND;
+     *          containing list of JittleDto objects.
      *          list.size = 0, = 1, > 1;
+     *          list.items aren't present in repository anymore.
      */
     
+    @Test
+    @Transactional
+    public void testPull_WrongPrincipal_NotFound() throws Exception {        
+        mockMvc.perform(get("/jittles").principal(wrongPrincipal)
+                .contentType(contentType))
+                .andExpect(status().isNotFound());
+    } 
     
+    @Test
+    @Transactional
+    public void testPull_CorrectPrincipal_FoundEmptyList() throws Exception {        
+        mockMvc.perform(get("/jittles").principal(correctPrincipal)
+                .contentType(contentType))
+                .andExpect(status().isFound())
+                .andExpect(jsonPath("$", hasSize(0)));
+        
+        List<Jittle> updatedJittles = this.jittleRepository.findAll();        
+        assertEquals(jittles, updatedJittles);
+    }
+    
+    @Test
+    @Transactional
+    public void testPull_FoundOneItemList() throws Exception {  
+        Principal hasOneJittlePrincipal = new Principal() {
+            @Override
+            public String getName() {
+                return "mwalls";
+            }
+        };
+        
+        mockMvc.perform(get("/jittles").principal(hasOneJittlePrincipal)
+                .contentType(contentType))
+                .andExpect(status().isFound())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].jitter.username", is(hasOneJittlePrincipal.getName())));
+        
+        List<Jittle> updatedJittles = this.jittleRepository.findAll();        
+        assertFalse(updatedJittles.stream()
+                        .anyMatch(jittle -> jittle.getJitter()
+                                        .getUsername()
+                                        .equals(hasOneJittlePrincipal.getName())));
+    }
+    
+    @Test
+    @Transactional
+    public void testPull_FoundThreeItemList() throws Exception {  
+        Principal hasThreeJittlesPrincipal = new Principal() {
+            @Override
+            public String getName() {
+                return "habuma";
+            }
+        };
+        
+        mockMvc.perform(get("/jittles").principal(hasThreeJittlesPrincipal)
+                .contentType(contentType))
+                .andExpect(status().isFound())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].jitter.username", is(hasThreeJittlesPrincipal.getName())))
+                .andExpect(jsonPath("$[1].jitter.username", is(hasThreeJittlesPrincipal.getName())))
+                .andExpect(jsonPath("$[2].jitter.username", is(hasThreeJittlesPrincipal.getName())));
+        
+        List<Jittle> updatedJittles = this.jittleRepository.findAll();        
+        assertFalse(updatedJittles.stream()
+                        .anyMatch(jittle -> jittle.getJitter()
+                                        .getUsername()
+                                        .equals(hasThreeJittlesPrincipal.getName())));
+    }
     
 
     protected String json(Object o) throws IOException {

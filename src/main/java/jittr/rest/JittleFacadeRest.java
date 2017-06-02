@@ -44,7 +44,6 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     
     protected static final String FIND_ONE = "/{id}";
     protected static final String COUNT = "/count";
-    protected static final String PULL_BY_IDJITTER_TQUEUE = "/byjitter/{idJitter}{tQueue}";
     
     /**
      * See {@link AbstractFacade#AbstractFacade()}
@@ -52,6 +51,10 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     protected JittleFacadeRest() {
     }
     
+    /**
+     * See {@link AbstractFacade#AbstractFacade
+     * (org.springframework.data.jpa.repository.JpaRepository, JitterRepository, Class, Class)}
+     */
     @Autowired
     protected
     JittleFacadeRest(final JittleRepository repository, final JitterRepository jitterRepository) {
@@ -59,30 +62,15 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     }
     
     @Override
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<JittleDto> save(final Principal jitterPrincipal, 
             @RequestBody Collection<JittleDto> jittles) 
             throws IllegalArgumentException, DomainObjValidationError {
         return super.save(jitterPrincipal, jittles);
     }
 
-
-    @Override
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<JittleDto> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    @RequestMapping(value = FIND_ONE, method = RequestMethod.GET, 
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public JittleDto findOne(@PathVariable final long id) throws IllegalArgumentException {     
-        return super.findOne(id);
-    }
  
     @Override
     @RequestMapping(value = COUNT, method = RequestMethod.GET, 
@@ -97,24 +85,20 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
      * 
      * @param jitterPrincipal the {@link Jitter}'s {@link Principal}, 
      * whose {@link Jittle}s to be returned.
-     * @param tQueue target queue holding these {@link Jittle}s. 
      * @return the list of found {@link JittleDto}s. May be empty.
      * 
-     * @throws IllegalArgumentException if any argument is {@literal null}.
+     * @throws IllegalArgumentException if argument is {@literal null}.
      * @throws EmptyResultDataAccessException if no{@link Jitter} found.
      */
-    @RequestMapping(value = PULL_BY_IDJITTER_TQUEUE, method = RequestMethod.GET, 
-                    consumes = MediaType.APPLICATION_JSON_VALUE, 
+    @ResponseStatus(HttpStatus.FOUND)   
+    @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, 
                     produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<JittleDto> pull(final Principal jitterPrincipal,
-            @PathVariable final TargetQueue tQueue) {
+    public List<JittleDto> pull(final Principal jitterPrincipal) {
         Assert.notNull(jitterPrincipal, VALUE_NOT_NULL);
-        Assert.notNull(tQueue, VALUE_NOT_NULL);
         
         validateJitter(jitterPrincipal);
-        final List<Jittle> jittles = 
-                repository.findByJitterUsernameAndTQueue(jitterPrincipal.getName(), tQueue);
-        repository.deleteByJitterUsernameAndTQueue(jitterPrincipal.getName(), tQueue);        
+        final List<Jittle> jittles = repository.findByJitterUsername(jitterPrincipal.getName());
+        repository.deleteByJitterUsername(jitterPrincipal.getName());        
         return convertToDtos(jittles);
     }  
 

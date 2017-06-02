@@ -36,7 +36,7 @@ public class WebSecurityConfig extends  WebSecurityConfigurerAdapter  {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
  
     @Autowired
-    private SpittrSavedRequestAwareAuthenticationSuccessHandler
+    private JittrSavedRequestAwareAuthenticationSuccessHandler
       authenticationSuccessHandler;
 
     @Override

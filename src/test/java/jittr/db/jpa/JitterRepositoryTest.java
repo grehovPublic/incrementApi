@@ -68,8 +68,8 @@ public class JitterRepositoryTest {
 		Jitter jitter = new Jitter(null, "newbee", "letmein", "New Bee", "newbee@habuma.com", ROLE_JITTER);
 		Jitter saved = jitterRepository.save(jitter);
 		assertEquals(7, jitterRepository.count());
-		assertJitter(7, saved);
-		assertJitter(6, jitterRepository.findOne(5L));
+		assertJitter(4, saved);
+		assertJitter(4, jitterRepository.findOne(7L));
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class JitterRepositoryTest {
 		JITTERS[1] = new Jitter(2L, "mwalls", "password", "Michael Walls", "mwalls@habuma.com", ROLE_JITTER);
 		JITTERS[2] = new Jitter(3L, "chuck", "password", "Chuck Wagon", "chuck@habuma.com", ROLE_JITTER);
 		JITTERS[3] = new Jitter(4L, "artnames", "password", "Art Names", "art@habuma.com", ROLE_JITTER);
-		JITTERS[4] = new Jitter(5L, "newbee", "letmein", "New Bee", "newbee@habuma.com", ROLE_JITTER);		
+		JITTERS[4] = new Jitter(7L, "newbee", "letmein", "New Bee", "newbee@habuma.com", ROLE_JITTER);		
 		JITTERS[5] = new Jitter(4L, "arthur", "letmein", "Arthur Names", "arthur@habuma.com", ROLE_JITTER);		
 	}
 	

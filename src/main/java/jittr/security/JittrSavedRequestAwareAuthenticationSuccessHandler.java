@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
-public class SpittrSavedRequestAwareAuthenticationSuccessHandler 
+public class JittrSavedRequestAwareAuthenticationSuccessHandler 
 extends SimpleUrlAuthenticationSuccessHandler {
 
   private RequestCache requestCache = new HttpSessionRequestCache();

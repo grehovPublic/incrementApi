@@ -98,7 +98,8 @@ public abstract class AbstractFacade<T, TD, I extends JpaRepository<T, Long>> {
         Assert.notNull(dto, VALUE_NOT_NULL); 
         Assert.notNull(ucb, VALUE_NOT_NULL); 
         
-        validateJitter(jitterPrincipal);   
+        validateJitter(jitterPrincipal);  
+        validate(dto.getClass().toString(), dto);  
         T entity = convertToEntity(dto);
         T saved = repository.save(entity);
       
@@ -114,8 +115,8 @@ public abstract class AbstractFacade<T, TD, I extends JpaRepository<T, Long>> {
     }
     
     /**
-     * Persists the {@link Collection} of {@link TD} objects for {@link T} domain entities 
-     * provided via the query parameter to the repository.
+     * Persists (adds new, updates present) the {@link Collection} of {@link TD} objects 
+     * for {@link T} domain entities provided via the query parameter to the repository.  
      * 
      * @param jitterPrincipal {@link Principal} of current {@link Jitter}.
      * @param entities {@link Collection} of {@link TD} objects for domain entities to save.
@@ -123,8 +124,7 @@ public abstract class AbstractFacade<T, TD, I extends JpaRepository<T, Long>> {
      * 
      * @throws IllegalArgumentException if anyargument is {@literal null}.
      * @throws DomainObjValidationError if any entity's dto to store rep. invariant is broken.
-     * @throws DuplicateKeyException if arument's list contains duplicates or if any given
-     *         {@link Jittle} has been already present in repository.
+     * @throws DuplicateKeyException if arument's list contains duplicates.
      */
     public ResponseEntity<TD> save(final Principal jitterPrincipal, final Collection<TD> dtoList) 
             throws IllegalArgumentException, DomainObjValidationError {

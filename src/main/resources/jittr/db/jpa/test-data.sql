@@ -20,3 +20,6 @@ insert into Jittle (id, jitter, message, postedTime, author, judgment, tqueue, c
 insert into Jittle (id, jitter, message, postedTime, author, judgment, tqueue, country) values (1013, 4, 'Bonjour from Art!', '2012-03-25 13:35:00Z','GREHOV', 'NONE', 'TRAIN_RAW', 'USA');
 insert into Jittle (id, jitter, message, postedTime, author, judgment, tqueue, country) values (1014, 4, 'Aloha from Art!', '2012-03-25 13:45:00Z','GREHOV', 'NONE', 'TRAIN_RAW', 'USA');
 insert into Jittle (id, jitter, message, postedTime, author, judgment, tqueue, country) values (1015, 4, 'God dag from Art!', '2012-03-25 13:55:00Z','GREHOV', 'NONE', 'TRAIN_RAW', 'USA');
+
+insert into judge_research (jitter, name, state, jr_type) values (5, 'Apple', 'BRANDNAME', 'BRAND');
+insert into judge_research (jitter, name, state, jr_type) values (5, 'Samsung', 'LEARNING', 'LEARNING');

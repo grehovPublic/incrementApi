@@ -16,7 +16,7 @@
 package jittr.rest;
 
 import jittr.Jittr;
-import jittr.db.jpa.JpaConfig;
+import jittr.security.WebSecurityConfig;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +31,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
+
+import java.util.Map;
 
 /**
  * Web security tests.
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
 @ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Jittr.class, JittleFacadeRestSecurityIntTest.ExtraConfig.class, 
-        JpaConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+        WebSecurityConfig.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JittleFacadeRestSecurityIntTest {
 
 	@Autowired
@@ -54,7 +55,7 @@ public class JittleFacadeRestSecurityIntTest {
 	MappingJackson2HttpMessageConverter converter;
 
 	@Test
-	public void passwordGrant() {
+	public void passwordGrant() {	    
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>();
 		request.set("username", "habuma");
 		request.set("password", "password");
@@ -73,5 +74,4 @@ public class JittleFacadeRestSecurityIntTest {
 	                .basicAuthorization("jittr", "jittr");
 		}
 	}
-
 }

@@ -9,16 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jittr.security.BCryptPasswordDeserializer;
@@ -42,12 +37,12 @@ public class Jitter implements Serializable {
     
     protected static final String COLNAME_PASSWORD = "password";  
     protected static final String COLNAME_FULLNAME = "fullname";     
-    protected static final String EXLUDED_FIELD = "email";
+    public static final String FIELD_EMAIL = "email";
+    public static final String FIELD_FULLNAME = "fullName";
+    public static final String FIELD_ROLL = "roll";
 
     @Id
-    @GeneratedValue(generator = ID_JTR_GENERATOR)
-    @GenericGenerator(name = ID_JTR_GENERATOR, strategy = ENHANCED_SEQ,
-        parameters = { @Parameter(name = "sequence_name", value = JTR_SEQ)})
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = COLNAME_USERNAME, nullable = false, unique = true, length = USERNAME_MAX_LENGTH)
@@ -184,11 +179,13 @@ public class Jitter implements Serializable {
     
     @Override
     public boolean equals(Object that) {
-        boolean result = EqualsBuilder.reflectionEquals(this, that, EXLUDED_FIELD);
+        boolean result = EqualsBuilder.reflectionEquals(this, that, ID_FIELD, FIELD_FULLNAME, 
+                FIELD_EMAIL, FIELD_ROLL);
         return result;
     }
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, EXLUDED_FIELD);
+        return HashCodeBuilder.reflectionHashCode(this, ID_FIELD, FIELD_FULLNAME, 
+                FIELD_EMAIL, FIELD_ROLL);
     }
 }

@@ -34,17 +34,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import jittr.Jittr;
-import jittr.db.JitterRepository;
 import jittr.db.JittleRepository;
-import jittr.db.jpa.JpaConfig;
 import jittr.domain.Jittle;
 import jittr.dto.JittleDto;
 import jittr.rest.JittleFacadeRest;
+import static jittr.rest.SharedConstants.*;
 
 
 @ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {Jittr.class, JpaConfig.class},
+@SpringBootTest(classes = {Jittr.class},
 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JittleFacadeRestIntTest  {
     
@@ -130,7 +129,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testSave_WrongPrincipalNullList_BadRequest() throws Exception {        
-        mockMvc.perform(post("/jittles").principal(wrongPrincipal)
+        mockMvc.perform(post(JITTLES).principal(wrongPrincipal)
                 .content(this.json(null))
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
@@ -139,7 +138,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testSave_WrongPrincipalEmptyList_NotFound() throws Exception {        
-        mockMvc.perform(post("/jittles").principal(wrongPrincipal)
+        mockMvc.perform(post(JITTLES).principal(wrongPrincipal)
                 .content(this.json(new ArrayList<JittleDto>()))
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
@@ -148,7 +147,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testSave_CorrectPrincipalEmptyList_Created() throws Exception {        
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(new ArrayList<JittleDto>()))
                 .contentType(contentType))
                 .andExpect(status().isCreated());
@@ -161,7 +160,7 @@ public class JittleFacadeRestIntTest  {
     public void testSave_CorrectPrincipalOneItemListValidItem_Created() throws Exception {   
         List<JittleDto> onePresentItemList = jittlesDto.subList(0, 2);
         onePresentItemList.get(0).setCountry("BRAZIL");
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(onePresentItemList))
                 .contentType(contentType))
                 .andExpect(status().isCreated());
@@ -178,7 +177,7 @@ public class JittleFacadeRestIntTest  {
         twoItemList.add(jittlesDto.get(0));
         twoItemList.add(null);
         
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(twoItemList))
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
@@ -187,7 +186,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testSave_BrokenItem_BadRequest() throws Exception {          
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(Arrays.asList(new JittleDto())))
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
@@ -199,7 +198,7 @@ public class JittleFacadeRestIntTest  {
         List<JittleDto> twoNewItemList = jittlesDto.subList(0, 3);
         twoNewItemList.get(0).setId(2000L);
         twoNewItemList.get(1).setId(2001L);
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(twoNewItemList))
                 .contentType(contentType))
                 .andExpect(status().isCreated());
@@ -213,7 +212,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testSave_TwoValidItemsDuplcate_BadRequest() throws Exception {          
-        mockMvc.perform(post("/jittles").principal(correctPrincipal)
+        mockMvc.perform(post(JITTLES).principal(correctPrincipal)
                 .content(this.json(Arrays.asList(jittlesDto.subList(0, 3))))
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
@@ -236,7 +235,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testPull_WrongPrincipal_NotFound() throws Exception {        
-        mockMvc.perform(get("/jittles").principal(wrongPrincipal)
+        mockMvc.perform(get(JITTLES).principal(wrongPrincipal)
                 .contentType(contentType))
                 .andExpect(status().isNotFound());
     } 
@@ -244,7 +243,7 @@ public class JittleFacadeRestIntTest  {
     @Test
     @Transactional
     public void testPull_CorrectPrincipal_FoundEmptyList() throws Exception {        
-        mockMvc.perform(get("/jittles").principal(correctPrincipal)
+        mockMvc.perform(get(JITTLES).principal(correctPrincipal)
                 .contentType(contentType))
                 .andExpect(status().isFound())
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -263,7 +262,7 @@ public class JittleFacadeRestIntTest  {
             }
         };
         
-        mockMvc.perform(get("/jittles").principal(hasOneJittlePrincipal)
+        mockMvc.perform(get(JITTLES).principal(hasOneJittlePrincipal)
                 .contentType(contentType))
                 .andExpect(status().isFound())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -286,7 +285,7 @@ public class JittleFacadeRestIntTest  {
             }
         };
         
-        mockMvc.perform(get("/jittles").principal(hasThreeJittlesPrincipal)
+        mockMvc.perform(get(JITTLES).principal(hasThreeJittlesPrincipal)
                 .contentType(contentType))
                 .andExpect(status().isFound())
                 .andExpect(jsonPath("$", hasSize(3)))

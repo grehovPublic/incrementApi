@@ -1,12 +1,14 @@
 package jittr.dto;
 
+import static jittr.rest.SharedConstants.VALUE_NOT_NULL;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.junit.Assert;
+import org.springframework.util.Assert;
 
 import jittr.rest.DomainObjValidationError;
 
@@ -46,8 +48,8 @@ public class FormValidationErrorDto implements Serializable {
      * @throws IllegalArgumentException if any argument is {@literal null}.
      */
     public void addFieldError(String path, String message) {
-        Assert.assertNotNull(path);
-        Assert.assertNotNull(message);
+        Assert.notNull(path,  VALUE_NOT_NULL);
+        Assert.notNull(message,  VALUE_NOT_NULL);
         
         FieldValidationErrorDto fieldError = new FieldValidationErrorDto(path, message);
         fieldErrors.add(fieldError);

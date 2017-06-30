@@ -1,10 +1,9 @@
 package jittr.dto;
 
 import static jittr.domain.SharedConstants.*;
+import static jittr.domain.Jitter.*;
 
 import java.io.Serializable;
-
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -73,14 +72,22 @@ public class JitterDto implements Serializable {
     /**
      * {@link Jitter#Jitter(Long, String, String, String, String, jittr.domain.Jitter.Role)}
      */
-    public JitterDto(Long id, String username, String password, String fullName, 
-            String email, jittr.domain.Jitter.Role roleJitter) {
+    public JitterDto(final Long id, final String username, final String password, final String fullName, 
+            final String email, final jittr.domain.Jitter.Role roleJitter) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.fullName = fullName;
         this.email = email;
         this.role = roleJitter;
+    }
+    
+    /**
+     * Copy constructor.
+     */
+    public JitterDto(final JitterDto jitter) {
+        this(jitter.getId(), jitter.getUsername(), jitter.getPassword(), jitter.getFullName(), 
+                jitter.getEmail(), jitter.getRole());
     }
 
     /**
@@ -145,12 +152,14 @@ public class JitterDto implements Serializable {
     
     @Override
     public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that, EXLUDED_FIELD);
-    }
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, EXLUDED_FIELD);
+        boolean result = EqualsBuilder.reflectionEquals(this, that, ID_FIELD, FIELD_FULLNAME, 
+                FIELD_EMAIL, FIELD_ROLL);
+        return result;
     }
     
-
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, ID_FIELD, FIELD_FULLNAME, 
+                FIELD_EMAIL, FIELD_ROLL);
+    }
 }

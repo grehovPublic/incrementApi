@@ -8,6 +8,8 @@ package jittr.rest;
 public interface SharedConstants {
 
     String APPLICATION_JSON = "application/json";
-    String JITTLES = "/jittles";
-    String JITTERS = "/jitters";
+    String JITTLES = "/api/jittles";
+    String JITTERS = "/api/jitters";
+    String VALUE_NOT_NULL = "{value.null}";
+    String VALUE_NOT_EMPTY = "{value.not-empty}";
 }

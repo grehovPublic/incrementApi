@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,12 +35,14 @@ public class RestWideExceptionHandler {
      * Sets according to the case 'http' status.
      * 
      * @param e handled exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Error illegalControllerArgumentHandler(IllegalArgumentException e) {
-        return new Error("Illegal Argument: " + e.getMessage());
+    public ResponseEntity<?> illegalControllerArgumentHandler(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Illegal Argument: " + e.getMessage());
     }
     
  
@@ -48,12 +51,14 @@ public class RestWideExceptionHandler {
      * Sets according to the case 'http' status.
      * 
      * @param e handled exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Error validateControllerArgumentHandler(MethodArgumentNotValidException e) {
-        return new Error("Argument's validation error: " + e.getMessage());
+    public ResponseEntity<?> validateControllerArgumentHandler(MethodArgumentNotValidException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Argument's validation error: " + e.getMessage());
     }
     
     /**
@@ -62,11 +67,11 @@ public class RestWideExceptionHandler {
      * Sets according 'http' status.
      * 
      * @param validationError handled {@link DomainObjValidationError} exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(DomainObjValidationError.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public FormValidationErrorDto handleFormValidationError(DomainObjValidationError validationError) {        
+    public ResponseEntity<?> handleFormValidationError(DomainObjValidationError validationError) {        
         FormValidationErrorDto dto = new FormValidationErrorDto();
 
         validationError.getFieldErrors()
@@ -75,8 +80,9 @@ public class RestWideExceptionHandler {
                 .forEach(fieldErrorCode -> 
                     dto.addFieldError(fieldError.getField(), fieldErrorCode));
         });     
-
-        return dto;
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Argument's validation error: " + dto);
     }
     
     /**
@@ -84,12 +90,29 @@ public class RestWideExceptionHandler {
      * Sets according to the case 'http' status.
      * 
      * @param e handled exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)   
-    public Error hanleEntityNotFound(EmptyResultDataAccessException e) {
-      return new Error("Entity(s) not found: " + e.getMessage());
+    public ResponseEntity<?> hanleEntityNotFound(EmptyResultDataAccessException e) {
+      return ResponseEntity
+              .status(HttpStatus.NOT_FOUND)
+              .body("Entity(s) not found: " + e.getMessage());
+    }
+    
+    /**
+     * Global controllers exceptions handler for 'EntityNotFoundException' case.
+     * Sets according to the case 'http' status.
+     * 
+     * @param e handled exception.
+     * @return response with details describing.
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)   
+    public ResponseEntity<?> hanleJitterNotFound(EntityNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("User not found: " + e.getMessage());
     }
     
     /**
@@ -97,12 +120,14 @@ public class RestWideExceptionHandler {
      * Sets according to the case 'http' status.
      * 
      * @param e handled exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(JitterNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)   
-    public Error hanleJitterNotFound(JitterNotFoundException e) {
-      return new Error("User not found: " + e.getMessage());
+    public ResponseEntity<?> hanleJitterNotFound(JitterNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("User not found: " + e.getMessage());
     }
     
     /**
@@ -110,12 +135,14 @@ public class RestWideExceptionHandler {
      * Sets according to the case 'http' status.
      * 
      * @param e handled exception.
-     * @return error with details describing.
+     * @return response with details describing.
      */
     @ExceptionHandler(DuplicateKeyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)   
-    public Error handleDuplicateEntity(DuplicateKeyException e) {
-      return new Error("Duplicate entity: " + e.getMessage());
+    public ResponseEntity<?> handleDuplicateEntity(DuplicateKeyException e) {
+      return ResponseEntity
+              .status(HttpStatus.BAD_REQUEST)
+              .body("Duplicate entity: " + e.getMessage());
     }
 }
 

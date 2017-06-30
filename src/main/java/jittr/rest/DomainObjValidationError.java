@@ -1,7 +1,9 @@
 package jittr.rest;
 
-import org.junit.Assert;
+import org.springframework.util.Assert;
 import org.springframework.validation.FieldError;
+
+import static jittr.rest.SharedConstants.VALUE_NOT_NULL;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class DomainObjValidationError extends Exception {
      * @throws IllegalArgumentException if argument is {@literal null}.
      */
     public DomainObjValidationError(List<FieldError> fieldErrors) {
-        Assert.assertNotNull(fieldErrors);
+        Assert.notNull(fieldErrors,  VALUE_NOT_NULL);
         this.fieldErrors = fieldErrors;
     }
  

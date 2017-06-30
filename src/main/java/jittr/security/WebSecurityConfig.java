@@ -40,27 +40,25 @@ public class WebSecurityConfig extends  WebSecurityConfigurerAdapter  {
       authenticationSuccessHandler;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {      
-        auth.userDetailsService(userDetailsService())
-        .passwordEncoder(new BCryptPasswordEncoder());
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {   
+        auth.userDetailsService(userDetailsService());
+//        .passwordEncoder(new BCryptPasswordEncoder());
     }
     
     @Override
     protected void configure(HttpSecurity http) throws Exception { 
         http
-        .csrf().disable()
-        .exceptionHandling()
-        .authenticationEntryPoint(restAuthenticationEntryPoint)
+            .csrf().disable()
+            .exceptionHandling()
         .and()
-        .authorizeRequests()
-        .antMatchers("/jittles").access("hasAnyRole('ROLE_JITTER','ROLE_ADMIN')")
+            .httpBasic().authenticationEntryPoint(restAuthenticationEntryPoint)
         .and()
-        .formLogin()
-        .successHandler(authenticationSuccessHandler)
-        .failureHandler(new SimpleUrlAuthenticationFailureHandler())
+            .authorizeRequests()
+            .antMatchers("/api/**").access("hasAnyRole('ROLE_JITTER','ROLE_ADMIN')")
         .and()
-        .requiresChannel()
-        .antMatchers("/jitter/**").requiresSecure()
+            .formLogin()
+            .successHandler(authenticationSuccessHandler)
+            .failureHandler(new SimpleUrlAuthenticationFailureHandler())
         .and()
         .logout();
     }
@@ -74,6 +72,5 @@ public class WebSecurityConfig extends  WebSecurityConfigurerAdapter  {
                 .orElseThrow(
                         () -> new UsernameNotFoundException("could not find the user '"
                                 + username + "'"));
-    }
-    
+    }   
 }

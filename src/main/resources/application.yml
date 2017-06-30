@@ -1,45 +1,61 @@
-#spring:
-#  datasource:  
-#    spring.datasource.driverClassName: org.h2.Driver  
-#    spring.datasource.url: jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-#    spring.datasource.username: sa
-#    spring.datasource.password: 
-#    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+spring:
+  profiles:
+    active: dev
+#    - local-postgres-test
+    
+---
+spring:
+  profiles: dev
+  datasource:
+    driverClassName: org.h2.Driver
+    url:             jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username:        sa
+    password: 
+    data:            classpath:/jittr/db/jpa/test-data.sql
+    
+  jpa:
+    database-platform:  org.hibernate.dialect.H2Dialect
+    generate-ddl:       true
+    show-sql:           true
+    hibernate.ddl-auto: create-drop
+    hibernate.use-new-id-generator-mappings: true
+    
+server:
+    port: 8090
+      
 
 ---
 spring:
-  profiles: prod
+  profiles: local-postgres-test
   datasource:
-
-    spring.datasource.driverClassName: org.postgresql.Driver
+    driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://192.168.99.100:5432/
     username: postgres
     password: admin
+    data: classpath:/jittr/db/jpa/test-data.sql
     
-    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
-    spring.jpa.generate-ddl: true
-    spring.jpa.show-sql: true
-    spring.jpa.hibernate.ddl-auto: create-drop
-    spring.data.jpa.repositories.enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate.ddl-auto: create-drop
+    hibernate.use-new-id-generator-mappings: true
+    
 
 ---
 spring:
   profiles: container
   datasource:
-    spring.datasource.driverClassName: org.postgresql.Driver
+    driverClassName: org.postgresql.Driver
     url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
     
-    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
-    spring.jpa.generate-ddl: true
-    spring.jpa.show-sql: true
-    spring.jpa.hibernate.ddl-auto: create-drop
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    show-sql: true
+    hibernate.ddl-auto: create-drop
     
-    
-#    spring.datasource.url=jdbc:postgresql://localhost:5432/initdb
-#    spring.datasource.username=postgres
-#    spring.datasource.password=mysecretpassword
-
     
     

@@ -2,7 +2,8 @@ package jittr.dto;
 
 import java.io.Serializable;
 
-import org.junit.Assert;
+import org.springframework.util.Assert;
+import static jittr.rest.SharedConstants.VALUE_NOT_NULL;
 
 /**
  * DTO class for {@link org.springframework.validation.FieldError}
@@ -25,8 +26,8 @@ public final class FieldValidationErrorDto implements Serializable {
      * @throws IllegalArgumentException if any argument is {@literal null}.
      */
     public FieldValidationErrorDto(String path, String message) {
-        Assert.assertNotNull(path);
-        Assert.assertNotNull(message);
+        Assert.notNull(path, VALUE_NOT_NULL);
+        Assert.notNull(message,  VALUE_NOT_NULL);
         this.path = path;
         this.message = message;
     }

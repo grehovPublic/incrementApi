@@ -2,26 +2,18 @@ package jittr.domain;
 
 import static jittr.domain.SharedConstants.*;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.validator.constraints.Range;
 
 /**
  * This datatype is based on a tweet from Twitter,
@@ -31,9 +23,12 @@ import org.hibernate.validator.constraints.Range;
 public class Jittle {
     
     protected static final String ID_JTL_GENERATOR = "ID_JITTLES_GENERATOR";
-    protected static final String JTL_SEQ = "jittles_seq";
-    protected static final String COLNAME_JITTER = "jitter";    
+    protected static final String JTL_SEQ = "jittles_seq";   
     protected static final String COLNAME_JITTLE = "jittle"; 
+    protected static final String COLNAME_POSTED_TIME = "postedtime"; 
+    protected static final String COLNAME_TQUEUE = "tqueue"; 
+    
+    public static final String FIELD_EMAIL = "email";
 
     @Id
 //    @GeneratedValue(generator = ID_JTL_GENERATOR)
@@ -48,7 +43,7 @@ public class Jittle {
     @Column
     private String message;
 
-    @Column
+    @Column(name = COLNAME_POSTED_TIME)
     private Date postedTime;
     
     @Column
@@ -58,8 +53,9 @@ public class Jittle {
      *  Attitude to the subject from the tweet message.
      *  Evaluated by the trained R model.
      */
-    public enum Judgment {NEGATIVE, NEUTRAL, POSITIVE, NONE};
-
+    public enum Judgment  {VERY_NEGATIVE, NEGATIVE, NEUTRAL, NONE,
+        POSITIVE, VERY_POSITIVE}
+    
     @NotNull
     @Enumerated(EnumType.STRING)
     private Judgment judgment;
@@ -71,6 +67,7 @@ public class Jittle {
     
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = COLNAME_TQUEUE)
     private TargetQueue tQueue;
 
     @Column
@@ -268,6 +265,7 @@ public class Jittle {
     public boolean equals(Object that) {
         return EqualsBuilder.reflectionEquals(this, that, ID_FIELD);
     }
+    
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this, ID_FIELD);
@@ -275,7 +273,7 @@ public class Jittle {
     
     @Override
     public String toString() {
-        return id.toString();
+        return id.toString() + " " + message.toString();
     }
 
 }

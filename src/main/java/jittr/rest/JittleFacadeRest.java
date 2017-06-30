@@ -7,26 +7,21 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import jittr.db.JitterRepository;
 import jittr.db.JittleRepository;
 import jittr.domain.Jitter;
 import jittr.domain.Jittle;
-import jittr.domain.Jittle.TargetQueue;
 import jittr.dto.JitterDto;
 import jittr.dto.JittleDto;
 
@@ -70,14 +65,6 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
             throws IllegalArgumentException, DomainObjValidationError {
         return super.save(jitterPrincipal, jittles);
     }
-
- 
-    @Override
-    @RequestMapping(value = COUNT, method = RequestMethod.GET, 
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public long count() {
-        return super.count();
-    }
     
     /**
      * Pulls {@link Jittle}s with given {@link Jitter}'s {@link Principal}
@@ -95,7 +82,7 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     @RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, 
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JittleDto> pull(final Principal jitterPrincipal) {
-        Assert.notNull(jitterPrincipal, VALUE_NOT_NULL);
+        Assert.notNull(jitterPrincipal, SharedConstants.VALUE_NOT_NULL);
         
         validateJitter(jitterPrincipal);
         final List<Jittle> jittles = repository.findByJitterUsername(jitterPrincipal.getName());
@@ -119,7 +106,7 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
    
     @Override
     protected List<Jittle> convertToEntities(Collection<JittleDto> jittleDtoList) {
-        Assert.notNull(jittleDtoList, VALUE_NOT_NULL);     
+        Assert.notNull(jittleDtoList, SharedConstants.VALUE_NOT_NULL);     
         return jittleDtoList.stream()
                 .map(jittleDto -> convertToEntity(jittleDto))
                 .collect(Collectors.toList());
@@ -127,7 +114,7 @@ public class JittleFacadeRest extends AbstractFacade<Jittle, JittleDto, JittleRe
     
     @Override
     public List<JittleDto> convertToDtos(Collection<Jittle> jittleList) {
-        Assert.notNull(jittleList, VALUE_NOT_NULL);     
+        Assert.notNull(jittleList, SharedConstants.VALUE_NOT_NULL);     
         return jittleList.stream()
                 .map(jittle -> convertToDto(jittle))
                 .collect(Collectors.toList());

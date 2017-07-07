@@ -2,9 +2,9 @@ spring:
   profiles:
     active: dev
     
-#increment:
-#  client-username: ${CLIENT_USERNAME}
-#  client-password: ${CLIENT_PASSWORD}
+increment:
+  client-username: ${CLIENT_USERNAME}
+  client-password: ${CLIENT_PASSWORD}
   
   url:
     increment: api/increment

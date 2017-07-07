@@ -69,7 +69,7 @@ public class WebSecurityConfig extends  WebSecurityConfigurerAdapter  {
             .httpBasic().authenticationEntryPoint(restAuthenticationEntryPoint)
         .and()
             .authorizeRequests()
-            .antMatchers(API_SUBPATH).authenticated()//.hasRole(REST_CLIENT_ROLE)
+            .antMatchers(API_SUBPATH).authenticated()
         .and()
             .formLogin()
             .successHandler(authenticationSuccessHandler)

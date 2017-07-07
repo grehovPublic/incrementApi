@@ -1,61 +1,30 @@
 spring:
   profiles:
     active: dev
-#    - local-postgres-test
+    
+#increment:
+#  client-username: ${CLIENT_USERNAME}
+#  client-password: ${CLIENT_PASSWORD}
+  
+  url:
+    increment: api/increment
     
 ---
 spring:
   profiles: dev
-  datasource:
-    driverClassName: org.h2.Driver
-    url:             jdbc:h2:mem:AZ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username:        sa
-    password: 
-    data:            classpath:/jittr/db/jpa/test-data.sql
-    
-  jpa:
-    database-platform:  org.hibernate.dialect.H2Dialect
-    generate-ddl:       true
-    show-sql:           true
-    hibernate.ddl-auto: create-drop
-    hibernate.use-new-id-generator-mappings: true
     
 server:
     port: 8090
-      
+    
+increment:
+  client-username: demo
+  client-password: demo 
 
 ---
 spring:
-  profiles: local-postgres-test
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.99.100:5432/
-    username: postgres
-    password: admin
-    data: classpath:/jittr/db/jpa/test-data.sql
-    
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    show-sql: true
-    hibernate.ddl-auto: create-drop
-    hibernate.use-new-id-generator-mappings: true
-    
+  profiles: prod
+   
 
----
-spring:
-  profiles: container
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
-    username: ${DATABASE_USER}
-    password: ${DATABASE_PASSWORD}
-    
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    generate-ddl: true
-    show-sql: true
-    hibernate.ddl-auto: create-drop
     
     
     

@@ -21,7 +21,6 @@ apply plugin: 'eclipse'
 apply plugin: 'war'
 apply plugin: 'gwt'
 
-
 repositories {
     mavenCentral()
     jcenter()
@@ -29,6 +28,7 @@ repositories {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 
 dependencies {
             
@@ -38,13 +38,6 @@ dependencies {
 
 	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
-}
-
-sourceSets {
-    main.java.srcDir "src/main/java"
-    main.resources.srcDir "src/main/resources"
-    test.java.srcDir "src/test/java"
-    test.resources.srcDir "src/test/resources"
 }
 
 task wrapper(type: Wrapper) {

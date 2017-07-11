@@ -3,11 +3,12 @@ spring:
     active: dev
     
 increment:
-  client-username: ${CLIENT_USERNAME}
-  client-password: ${CLIENT_PASSWORD}
+  client-username: demo
+  client-password: demo
   
   url:
     increment: api/increment
+    proxy-php: "http://localhost:8000/increment/proxy"
     
 ---
 spring:

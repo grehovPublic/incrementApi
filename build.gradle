@@ -10,6 +10,7 @@ buildscript {
 	}	
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath ("de.richsource.gradle.plugins:gwt-gradle-plugin:0.6")
 	}
 }
 
@@ -17,31 +18,47 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'war'
+apply plugin: 'gwt'
 
-jar {
-    baseName = 'increment-api'
-    version =  '0.1.0'
-}
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile("org.springframework.plugin:spring-plugin-core")	
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-security")
-	compile("org.apache.commons:commons-lang3:$commonsLangVersion")
+            
+	compile 'org.springframework.plugin:spring-plugin-core',	
+			'org.springframework.boot:spring-boot-starter-web',
+			'org.springframework.boot:spring-boot-starter-security'
+
 	
-	testCompile("org.springframework.boot:spring-boot-starter-test")
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+sourceSets {
+    main.java.srcDir "src/main/java"
+    main.resources.srcDir "src/main/resources"
+    test.java.srcDir "src/test/java"
+    test.resources.srcDir "src/test/resources"
 }
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.0'
 }
 
+jar {
+    baseName = 'increment'
+    version = '1.0.0'
+}
+
+gwt {
+    gwtVersion='2.7.0'
+    modules 'increment.Increment'
+}
 
 

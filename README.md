@@ -1,7 +1,7 @@
 Install PHP proxy.
 
 Set in application.yml:
-	<your proxy location>/proxy?
+	{your proxy location}/proxy?
 
 Run incrementAPI:
 
